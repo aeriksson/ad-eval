@@ -1,0 +1,204 @@
+#!/usr/bin/env python
+
+import sys
+import numpy
+import argparse
+import ConfigParser
+import os
+
+import anomaly_detection
+from anomaly_detection.utils import plot_time_series
+
+_PROGRAM_DESCRIPTION = 'Methods for detecting anomalies in long real-valued time series.'
+_INPUT_FILE_HELP = 'Use this option to specify an input file'
+_CONFIG_FILE_HELP = 'Use this option to specify a configuration file.'
+_PLOT_HELP = 'If set, a plot of the time series and anomaly scores is shown.'
+
+_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
+_DEFAULT_CONFIG_FILE = os.path.join(_SCRIPT_PATH, 'default.conf')
+
+#TODO: add support for semisupervised AD
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    config = get_config(argv)
+
+    try:
+        input_file = config.get('general', 'input_file')
+    except ConfigParser.NoOptionError:
+        input_file = None
+
+    anomaly_detector = get_anomaly_detector(config)
+
+    input_sequence = get_unsupervised_input(input_file)
+
+    progress_callback = get_progress_callback()
+
+    anomaly_scores = anomaly_detector.evaluate(input_sequence, progress_callback=progress_callback)
+
+    if config.getboolean('general', 'show_plot'):
+        plot_output(input_sequence, anomaly_scores)
+
+    sys.stdout.write('\r%s' % anomaly_scores)
+
+def get_anomaly_detector(config):
+    evaluation_filter_config = get_section_options(config, 'evaluation_filter')
+    context_config = get_section_options(config, 'context')
+    reference_filter_config = get_section_options(config, 'reference_filter')
+    evaluator_config = get_section_options(config, 'evaluator')
+    aggregator_config = get_section_options(config, 'aggregator')
+    representation_config = get_section_options(config, 'representation')
+    discretization_config = get_section_options(config, 'discretization')
+
+    return anomaly_detection.create_anomaly_detector(
+        evaluation_filter_config,
+        context_config,
+        reference_filter_config,
+        evaluator_config,
+        aggregator_config,
+        representation_config,
+        discretization_config,
+    )
+
+def get_section_options(config, section_name):
+    '''
+    Returns a dict of all options in the section with the given
+    name in the given ConfigParser object.
+    '''
+    try:
+        option_names = config.options(section_name)
+
+        section_options = {}
+
+        for option_name in option_names:
+            section_options[option_name] = config.get(section_name, option_name)
+
+        return section_options
+    except ConfigParser.NoSectionError:
+        return None
+
+def get_config(argv):
+    '''
+    Returns a ConfigParser object, with options given
+    by the configuration file and command line.
+    '''
+    args = parse_args(argv)
+
+    config = ConfigParser.ConfigParser()
+    read_configs = config.read(args.config_file)
+
+    if len(read_configs) == 0:
+        raise Exception('No config file found.')
+
+    if args.input_file is not None:
+        config.set('general', 'input_file', args.input_file)
+
+    config.set('general', 'show_plot', str(args.p))
+
+    return config
+
+
+def parse_args(argv):
+    '''
+    Uses an ArgumentParser to parse optional command line arguments.
+    '''
+    argparser = argparse.ArgumentParser(description=_PROGRAM_DESCRIPTION)
+
+    argparser.add_argument(
+        '--input-file',
+        '-f',
+        help=_INPUT_FILE_HELP,
+        action='store',
+        default=None
+    )
+    argparser.add_argument(
+        '--config-file',
+        '-c',
+        help=_CONFIG_FILE_HELP,
+        action='store',
+        default=_DEFAULT_CONFIG_FILE,
+    )
+
+    argparser.add_argument(
+        '-p',
+        help=_PLOT_HELP,
+        action='store_true'
+    )
+
+    return argparser.parse_args(argv)
+
+
+def get_progress_callback():
+    '''
+    Creates a callback function for displaying progress, which
+    prints the progress as a percentage to stdout.
+    '''
+    def callback(percent_done):
+        sys.stdout.write("\rprogress: %.2f%%\t" % (100.0 * percent_done))
+        sys.stdout.flush()
+
+    return callback
+
+def get_unsupervised_input(input_file=None):
+    '''
+    Reads sequence from stdin, or from input_file if specified.
+    '''
+    if input_file is None:
+        stream = sys.stdin
+        evaluation_sequence = read_time_series(stream, 'sequence: ')
+    else:
+        stream = open(input_file)
+        evaluation_sequence = read_time_series(stream)
+        stream.close()
+
+    return evaluation_sequence
+
+
+def get_supervised_input(input_file=None):
+    '''
+    Reads evaluation and reference sequences from stdin,
+    or from input_file if specified.
+    '''
+    if input_file is None:
+        stream = sys.stdin
+        reference_sequence = read_time_series(stream, 'reference sequence: ')
+        evaluation_sequence = read_time_series(stream, 'evaluation sequence: ')
+    else:
+        stream = open(input_file)
+        reference_sequence = read_time_series(stream)
+        evaluation_sequence = read_time_series(stream)
+        stream.close()
+
+    return reference_sequence, evaluation_sequence
+
+
+def read_time_series(stream, prompt=None):
+    '''
+    Reads and parses time series from the given stream.
+    If prompt is specified, it is first printed.
+    '''
+    if prompt is not None:
+        print(prompt)
+    input_string = stream.readline()
+    return numpy.fromstring(input_string, sep=' ')
+
+
+def plot_output(time_series, anomaly_scores, reference_series=None):
+    '''
+    Renders a time series along with its anomaly scores. If a reference series
+    is provided, it is joined with the time series, and the anomaly scores
+    vector is prepended with zeroes to give two vectors of equal length.
+    '''
+
+    s1 = time_series
+    s2 = anomaly_scores
+    if reference_series is not None:
+        s1 = numpy.concatenate([reference_series, s1])
+        s2 = numpy.concatenate([numpy.zeros(len(reference_series)), s2])
+
+    plot_time_series([s1, s2], ['Time series', 'Anomaly scores'])
+
+if __name__ == '__main__':
+    sys.exit(main())
