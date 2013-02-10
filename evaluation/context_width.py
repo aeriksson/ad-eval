@@ -9,7 +9,7 @@ evaluating the accuracy of a given kNN anomaly detection problem on a
 single sequence.
 """
 
-CONTEXT_WIDTHS = range(20, 400, 100)
+CONTEXT_WIDTHS = range(20, 400, 4)
 TEST_FILE = 'sequences/random_walk_added_noise'
 
 # set up anomaly detectors
