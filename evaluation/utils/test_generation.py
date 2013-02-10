@@ -79,9 +79,7 @@ def generate_random_test(base_sequence, count, anomaly_type, amplitude_interval,
     anomaly_generator = RandomAnomalyGenerator(
         amplitude_interval, width_interval, anomaly_function, random_number_generator)
 
-    sequences = [anomaly_generator.add_single_anomaly(base_sequence) for _ in range(count)]
-
-    return performance_test.PerformanceTest(sequences, anomaly_vectors)
+    return [anomaly_generator.add_single_anomaly(base_sequence) for _ in range(count)]
 
 
 def _get_anomaly_function_from_type(anomaly_type, **kwargs):
