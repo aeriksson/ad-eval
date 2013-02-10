@@ -120,6 +120,10 @@ class ResultTracker(object):
             return sum(values) / len(values)
 
     def get_normalized_anomaly_vector_plot(self, label_list):
+        """
+        Produces a 3D surface plot of the anomaly vectors associated with
+        label_list.
+        """
         anomaly_vectors = []
 
         for label in label_list:
@@ -138,6 +142,24 @@ class ResultTracker(object):
 
         X, Y = numpy.meshgrid(range(len(anomaly_vectors[0])), label_list)
         Z = numpy.array(anomaly_vectors)
+
+        fig = pyplot.figure()
+        plot = fig.gca(projection='3d')
+        plot.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0)
+        return fig, plot
+
+    def get_average_value_plot(self, label_matrix, x_values, y_values, key):
+        """
+        Produces a 3D plot of the average value of the given key.
+        """
+        label_matrix = numpy.array(label_matrix)
+        z_values = []
+        for label in label_matrix.flat:
+            z = self.get_filtered_avg_over_key(key, lambda x: x['anomaly_detector'] == label)
+            z_values.append(z)
+
+        X, Y = numpy.meshgrid(x_values, y_values)
+        Z = numpy.reshape(z_values, label_matrix.shape)
 
         fig = pyplot.figure()
         plot = fig.gca(projection='3d')
