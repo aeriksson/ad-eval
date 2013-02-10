@@ -1,7 +1,5 @@
 """
 Distances for continuous time series go here.
-
-TODO: add more distances!
 """
 
 import numpy
@@ -13,7 +11,7 @@ def euclidean(a, b):
     return numpy.linalg.norm(a - b)
 
 
-def dynamic_time_warp(name, a, b):
+def dynamic_time_warp(a, b):
     dtw = mlpy.Dtw()
     distance = dtw.compute(a, b)
     return distance
