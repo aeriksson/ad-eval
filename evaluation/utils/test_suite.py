@@ -62,7 +62,7 @@ class TestSuite(object):
         """
         Evaluates the specified test on the specified anomaly detector.
         """
-        sequence_count = len(test[0])
+        sequence_count = len(test)
 
         if progress_counter is not None:
             progress_counter.total_sequences = sequence_count
