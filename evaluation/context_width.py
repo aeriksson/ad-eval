@@ -9,7 +9,7 @@ evaluating the accuracy of a given kNN anomaly detection problem on a
 single sequence.
 """
 
-CONTEXT_WIDTHS = range(20, 400, 4)
+CONTEXT_WIDTHS = range(20, 400, 1)
 TEST_FILE = 'sequences/random_walk_added_noise'
 
 # set up anomaly detectors
@@ -26,14 +26,8 @@ test_suite = utils.TestSuite(anomaly_detectors, CONTEXT_WIDTHS, [test], ['test']
 # execute test
 test_suite.evaluate(display_progress=True)
 
-# get plot
+# get plots
 results = test_suite.results
-fig, plot = results.get_normalized_anomaly_vector_plot(CONTEXT_WIDTHS)
-plot.set_ylabel('context width')
-plot.set_zlabel('normalized anomaly vector amplitude')
-
-#rotate to get a better initial view
-plot.azim = 120
-plot.elev = 55
-
-fig.show()
+fig1, plot1 = utils.plot_normalized_anomaly_vector_heat_map(results, CONTEXT_WIDTHS, xlabel='m')
+fig2, plot2 = utils.plot_mean_error_values(results, CONTEXT_WIDTHS, CONTEXT_WIDTHS, xlabel='m')
+fig3, plot3 = utils.plot_execution_times(results, CONTEXT_WIDTHS, CONTEXT_WIDTHS, xlabel='m')

@@ -28,16 +28,8 @@ test_suite = utils.TestSuite(anomaly_detectors, STEP_VALUES, [test], ['test'])
 # execute test
 test_suite.evaluate(display_progress=True)
 
-# get plot
+# get plots
 results = test_suite.results
-fig, plot = results.get_normalized_anomaly_vector_plot(STEP_VALUES)
-plot.set_ylabel('window step')
-plot.set_zlabel('anomaly value')
-plot.set_zticks([])
-plot.set_xticks([])
-
-# rotate to get a better initial view
-plot.azim = 120
-plot.elev = 55
-
-fig.show()
+fig1, plot1 = utils.plot_normalized_anomaly_vector_heat_map(results, STEP_VALUES, ylabel='s')
+fig2, plot2 = utils.plot_mean_error_values(results, STEP_VALUES, STEP_VALUES, xlabel='s')
+fig3, plot3 = utils.plot_execution_times(results, STEP_VALUES, STEP_VALUES, xlabel='s')
