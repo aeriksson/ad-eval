@@ -15,6 +15,6 @@ setup(
     description='Anomaly detection on sequences.',
     long_description=readme,
     license=license,
-    requires=['scipy', 'numpy', 'scikits.learn', 'mlpy', 'matplotlib'],
+    requires=['scipy', 'numpy', 'sklearn', 'mlpy', 'matplotlib'],
     packages=find_packages()
 )
