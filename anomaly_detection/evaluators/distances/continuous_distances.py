@@ -16,4 +16,6 @@ def dynamic_time_warp(a, b):
     distance = dtw.compute(a, b)
     return distance
 
+
 euclidean.IS_DISCRETE = False
+dynamic_time_warp.IS_DISCRETE = False
