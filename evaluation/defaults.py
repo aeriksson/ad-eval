@@ -8,4 +8,5 @@ DEFAULT_KNN_CONFIG = {
     'reference_filter_config': _DEFAULT_FILTER_CONFIG,
     'evaluator_config': {'method': 'knn', 'distance_measure': 'euclidean'},
     'aggregator_config': {'method': 'mean'},
+    'discretization_config': {'method': 'sax', 'dimensions': 10, 'alphabet_size': 10}
 }
