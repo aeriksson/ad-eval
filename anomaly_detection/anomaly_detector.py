@@ -51,7 +51,8 @@ def _get_filter_wrapper(evaluator_config, representation_config=None, discretiza
 
     if evaluators.uses_discrete_distance(evaluator_config):
         r = representations.get_representation_converter(**discretization_config)
-        wrapper = lambda x: r(wrapper(x))
+        new_wrapper = lambda x: r(wrapper(x))
+        return new_wrapper
 
     return wrapper
 
