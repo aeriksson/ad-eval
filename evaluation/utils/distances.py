@@ -50,8 +50,8 @@ def _get_equal_support_threshold(anomaly_vector, support_size):
 def normalized_euclidean(label_vector, anomaly_vector):
     '''
     '''
-    min_val = min(label_vector)
-    width = max(label_vector) - min_val
+    min_val = min(anomaly_vector)
+    width = max(anomaly_vector) - min_val
     normalized_anomaly_vector = [(x - min_val) / width for x in anomaly_vector]
 
     distance = spatial.distance.euclidean(normalized_anomaly_vector, label_vector)
