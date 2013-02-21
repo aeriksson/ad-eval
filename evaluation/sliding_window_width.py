@@ -9,7 +9,7 @@ by evaluating the accuracy of a given (sliding window) kNN anomaly detection
 problem on a single sequence.
 """
 
-WINDOW_WIDTHS = range(1, 101, 1)
+WINDOW_WIDTHS = range(1, 51, 1)
 TEST_FILE = 'sequences/random_walk_added_noise'
 
 # set up anomaly detectors
