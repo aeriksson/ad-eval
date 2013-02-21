@@ -28,6 +28,6 @@ test_suite.evaluate(display_progress=True)
 
 # get plots
 results = test_suite.results
-fig1, plot1 = utils.plot_normalized_anomaly_vector_heat_map(results, CONTEXT_WIDTHS, xlabel='m')
+fig1, plot1 = utils.plot_normalized_anomaly_vector_heat_map(results, CONTEXT_WIDTHS, ylabel='m')
 fig2, plot2 = utils.plot_mean_error_values(results, CONTEXT_WIDTHS, CONTEXT_WIDTHS, xlabel='m')
 fig3, plot3 = utils.plot_execution_times(results, CONTEXT_WIDTHS, CONTEXT_WIDTHS, xlabel='m')

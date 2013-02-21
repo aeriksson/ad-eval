@@ -7,7 +7,7 @@ import defaults
 """
 
 AGGREGATORS = ['max', 'min', 'mean', 'median']
-K_VALUES = range(1, 100, 1)
+K_VALUES = range(1, 101, 1)
 TEST_FILE = 'sequences/random_walk_added_noise'
 
 heat_map_fig = pyplot.figure()
@@ -37,7 +37,7 @@ for aggregator, heat_map_plot in zip(AGGREGATORS, heat_map_plots):
     # get plots
     results = test_suite.results
 
-    results.plot_normalized_anomaly_vector_heat_map(K_VALUES, plot=heat_map_plot)
+    utils.plots.plot_normalized_anomaly_vector_heat_map(results, K_VALUES, plot=heat_map_plot)
     heat_map_plot.set_title(aggregator)
     heat_map_plot.set_ylabel('k')
     
