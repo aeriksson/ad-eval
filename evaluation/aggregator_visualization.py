@@ -1,5 +1,5 @@
 import anomaly_detection
-import utils
+import eval_utils as utils
 from matplotlib import pyplot
 
 import defaults

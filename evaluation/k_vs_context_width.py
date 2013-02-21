@@ -3,7 +3,7 @@ Evaluates a test on a kNN anomaly detector with different values
 of k and window width and creates a heat map of the accuracy.
 """
 import anomaly_detection
-import utils
+import eval_utils as utils
 import random
 from matplotlib import pyplot
 
