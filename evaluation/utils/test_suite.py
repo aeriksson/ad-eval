@@ -24,6 +24,8 @@ class TestSuite(object):
             progress_counter = ProgressCounter()
             progress_counter.total_detectors = ad_count
             progress_counter.completed_detectors = 0
+        else:
+            progress_counter = None
 
         for i in range(ad_count):
             anomaly_detector = self._anomaly_detectors[i]
@@ -34,7 +36,8 @@ class TestSuite(object):
             if display_progress:
                 progress_counter.completed_detectors = i + 1
 
-        progress_counter.print_progress()
+        if progress_counter is not None:
+            progress_counter.print_progress()
 
     def _evaluate_anomaly_detector(self, anomaly_detector, anomaly_detector_label,
                                    progress_counter=None):
@@ -52,7 +55,7 @@ class TestSuite(object):
             test_label = self._test_labels[i]
 
             self._evaluate_test(anomaly_detector, anomaly_detector_label,
-                           test, test_label, progress_counter)
+                                test, test_label, progress_counter)
 
             if progress_counter is not None:
                 progress_counter.completed_tests = i + 1
@@ -71,11 +74,8 @@ class TestSuite(object):
         progress_callback = _get_progress_callback(progress_counter)
         
         for sequence, anomaly_vector in test:
-            stats = _evaluate_sequence(anomaly_detector,
-                progress_callback,
-                sequence,
-                anomaly_vector
-            )
+            stats = _evaluate_sequence(anomaly_detector, progress_callback,
+                                       sequence, anomaly_vector)
 
             self.results.add_record(anomaly_detector_label, test_label, **stats)
 
@@ -107,7 +107,8 @@ def _evaluate_sequence(anomaly_detector, progress_callback, sequence, reference_
 
 def _get_progress_callback(progress_counter):
     def callback(progress_fraction):
-        progress_counter.sequence_progress = progress_fraction
-        progress_counter.print_progress()
+        if progress_counter is not None:
+            progress_counter.sequence_progress = progress_fraction
+            progress_counter.print_progress()
 
     return callback
