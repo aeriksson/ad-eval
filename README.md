@@ -1,4 +1,4 @@
-ADExplore - easy evaluation of sequential anomaly detection methods
+ad-eval - easy evaluation of sequential anomaly detection methods
 ===================================================================
 A minimalistic and flexible framework optimized for efficient evaluation and comparison of anomaly detection methods (and problem formulations) on sets of sequential data.
 
