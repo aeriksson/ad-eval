@@ -1,7 +1,8 @@
 import numpy
-from matplotlib import pyplot, cm
+from matplotlib import pyplot, cm, rcParams
 from mpl_toolkits.mplot3d import Axes3D
 from itertools import cycle
+
 
 def plot_normalized_anomaly_vectors_3d(results, label_list):
     """
@@ -30,8 +31,9 @@ def plot_normalized_anomaly_vectors_3d(results, label_list):
 
     fig = pyplot.figure()
     plot = fig.gca(projection='3d')
-    plot.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.gist_gray, linewidth=0)
+    plot.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0)
     return fig, plot
+
 
 def plot_normalized_anomaly_vector_heat_map(results, label_list, plot=None, title=None, xlabel=None, ylabel=None):
     """
@@ -41,8 +43,10 @@ def plot_normalized_anomaly_vector_heat_map(results, label_list, plot=None, titl
     """
     fig = None
 
+    rcParams.update({'font.size': 10})
+
     if plot is None:
-        fig = pyplot.figure()
+        fig = pyplot.figure(figsize=(8, 3))
         plot = fig.gca()
 
     anomaly_vectors = []
@@ -62,7 +66,7 @@ def plot_normalized_anomaly_vector_heat_map(results, label_list, plot=None, titl
         anomaly_vectors.append(anomaly_vector)
 
     extent = (0, len(anomaly_vector), label_list[0], label_list[-1])
-    plot.imshow(numpy.flipud(numpy.array(anomaly_vectors)), cmap=cm.Greys,
+    plot.imshow(numpy.flipud(numpy.array(anomaly_vectors)), cmap=cm.coolwarm,
                 interpolation='nearest', extent=extent, aspect='auto')
 
     if title is not None:
@@ -78,8 +82,9 @@ def plot_normalized_anomaly_vector_heat_map(results, label_list, plot=None, titl
 
     if fig is not None:
         fig.tight_layout()
-        fig.show() 
+        fig.show()
         return fig, plot
+
 
 def plot_average_value_heat_map(results, label_matrix, x_values, y_values, key, xlabel=None, ylabel=None, title=None):
     """
@@ -98,7 +103,7 @@ def plot_average_value_heat_map(results, label_matrix, x_values, y_values, key, 
     
     extent = (x_values[0], x_values[-1], y_values[0], y_values[-1])
     
-    plot.imshow(numpy.flipud(Z), cmap=cm.gist_gray, interpolation='nearest', extent=extent)
+    plot.imshow(numpy.flipud(Z), cmap=cm.coolwarm, interpolation='nearest', extent=extent)
 
     if xlabel is not None:
         plot.set_xlabel(xlabel)
@@ -113,17 +118,20 @@ def plot_average_value_heat_map(results, label_matrix, x_values, y_values, key, 
 
     return fig, plot
 
-def plot_anomaly_vectors(results, ad_labels, ad_legend, evaluation_sequence=None, reference_anomaly_vector=None,
-                        xlabel=None, ylabel=None, title=None, normalize=False):
+
+def plot_anomaly_vectors(results, ad_labels, ad_legend, xlabel=None, ylabel=None,
+                         title=None, normalize=False, plot=None):
     """
-    Gives a simple line plot of an anomaly vector.
+    Gives a simple line plot of anomaly vectors.
     Optionally shows the evaluation sequence and reference anomaly vector.
     Assumes that there is only one test, which contains a single sequence.
     """
+    fig = None
 
-    fig = pyplot.figure()
-    plot = fig.gca()
-    markers = cycle(['x', 's', 'o', 'h', 'v', 'o', '^'])
+    if plot is None:
+        fig = pyplot.figure()
+        plot = fig.gca()
+    styles = cycle(['k', 'k:', 'k--', 'k-.'])
 
     max_val = 0
 
@@ -133,18 +141,12 @@ def plot_anomaly_vectors(results, ad_labels, ad_legend, evaluation_sequence=None
         anomaly_vector = results.get_filtered_key_values('anomaly_vector', filter_predicate)[0]
 
         if normalize:
-            anomaly_vector = _normalize(anomaly_vector)
+            anomaly_vector = _normalize_array(anomaly_vector)
 
         if max(anomaly_vector) > max_val:
             max_val = max(anomaly_vector)
 
-        plot.plot(anomaly_vector, label=str(legend), marker=next(markers))
-
-    if evaluation_sequence is not None:
-        plot.plot(evaluation_sequence, label='Evaluation sequence', marker=next(markers))
-
-    if reference_anomaly_vector is not None:
-        plot.plot(reference_anomaly_vector, label='Reference anomaly vector', marker=next(markers))
+        plot.plot(anomaly_vector, next(styles), label=str(legend))
 
     if xlabel is not None:
         plot.set_xlabel(xlabel)
@@ -159,9 +161,12 @@ def plot_anomaly_vectors(results, ad_labels, ad_legend, evaluation_sequence=None
 
     plot.legend(loc='best')
 
-    fig.show()
+    if fig is not None:
+        fig.tight_layout()
+        fig.show()
 
-    return fig, plot
+        return fig, plot
+
 
 def plot_mean_error_values(results, ad_labels, xvalues, plot=None, title=None, xlabel=None, ylabel=None):
     fig = None
@@ -173,20 +178,19 @@ def plot_mean_error_values(results, ad_labels, xvalues, plot=None, title=None, x
     full_support_errors = []
     for label in ad_labels:
         z = results.get_filtered_avg_over_key('full_support_distance',
-                                           lambda x: x['anomaly_detector'] == label)
+                                              lambda x: x['anomaly_detector'] == label)
         full_support_errors.append(z)
 
     equal_support_errors = []
     for label in ad_labels:
         z = results.get_filtered_avg_over_key('equal_support_distance',
-
-                                           lambda x: x['anomaly_detector'] == label)
+                                              lambda x: x['anomaly_detector'] == label)
         equal_support_errors.append(z)
 
     normalized_euclidean_errors = []
     for label in ad_labels:
         z = results.get_filtered_avg_over_key('normalized_euclidean_distance',
-                                           lambda x: x['anomaly_detector'] == label)
+                                              lambda x: x['anomaly_detector'] == label)
         normalized_euclidean_errors.append(z)
 
     full_support_errors = _normalize_array(full_support_errors)
@@ -216,6 +220,7 @@ def plot_mean_error_values(results, ad_labels, xvalues, plot=None, title=None, x
         fig.show()
 
         return fig, plot
+
 
 def plot_execution_times(results, ad_labels, xvalues, plot=None, title=None, xlabel=None, ylabel=None):
     fig = None
@@ -250,6 +255,7 @@ def plot_execution_times(results, ad_labels, xvalues, plot=None, title=None, xla
         fig.show()
 
         return fig, plot
+
 
 def _normalize_array(a):
     m = min(a)
