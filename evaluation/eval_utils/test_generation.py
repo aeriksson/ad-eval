@@ -2,7 +2,6 @@ import numpy
 import random
 
 import anomaly_generation
-import performance_test
 
 _LENGTH_ERROR = "Invalid subsequence length: %s"
 
@@ -47,7 +46,7 @@ def generate_specified_test(base_sequences, anomaly_types, amplitudes, intervals
 
         length = len(base_sequence)
         anomaly_function = _get_anomaly_function_from_type(anomaly_type,
-                                random_number_generator=random_number_generator)
+                                                           random_number_generator=random_number_generator)
 
         anomaly_vector = [1 if interval[0] <= x <= interval[1] else 0 for x in range(length)]
         sequence = anomaly_function(base_sequence, amplitude, interval)
