@@ -1,11 +1,10 @@
-'''
-SVM-based evaluator. Buffers training data.
-'''
-
 from sklearn import svm
 
 
 class SVMEvaluator(object):
+    '''
+    One-class SVM-based evaluator. Buffers training data.
+    '''
 
     def __init__(self, kernel="rbf", nu=0.1, gamma=0.1, **kwargs):
         self._classifier = svm.OneClassSVM(kernel=kernel, nu=nu, gamma=gamma, **kwargs)
@@ -24,5 +23,5 @@ class SVMEvaluator(object):
         cls = self._classifier.predict(sequence)
         return 0 if cls == 1 else 1
 
-    def uses_discrete_distance(self):
+    def requires_symbolic_input(self):
         return False

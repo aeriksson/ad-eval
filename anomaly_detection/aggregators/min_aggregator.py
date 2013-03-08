@@ -2,6 +2,10 @@ import numpy
 
 
 class MinAggregator(object):
+    """
+    Constructs an anomaly vector with the minimum anomaly score
+    for each item.
+    """
     def __init__(self, series_length=0):
         self._values = numpy.ones(series_length) * numpy.inf
 

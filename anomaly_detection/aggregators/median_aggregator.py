@@ -2,6 +2,10 @@ import numpy
 
 
 class MedianAggregator(object):
+    """
+    Constructs an anomaly vector with the median anomaly score
+    for each item.
+    """
     def __init__(self, series_length=0):
         self._values = []
 

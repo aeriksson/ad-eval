@@ -5,14 +5,14 @@ def get_z_normalization_converter(*args):
     return lambda time_series: convert_to_z_normalized(time_series)
 
 
-def convert_to_z_normalized(time_series):
+def convert_to_z_normalized(sequence):
     """
-    Assuming that the time series is drawn from a N(a,b) distribution,
-    normalizes (Z-normalization) it to have been drawn from N(0,1).
+    Normalizes the input sequence to have zero empirical mean
+    and unit empirical variance.
     """
-    mean = numpy.mean(time_series)
-    standard_deviation = numpy.std(time_series)
+    mean = numpy.mean(sequence)
+    standard_deviation = numpy.std(sequence)
     if standard_deviation == 0:
-        return numpy.zeros(len(time_series))
-    modified_series = (time_series - mean) / standard_deviation
+        return numpy.zeros(len(sequence))
+    modified_series = (sequence - mean) / standard_deviation
     return modified_series

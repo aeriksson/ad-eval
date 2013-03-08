@@ -24,10 +24,10 @@ def create_anomaly_detector(evaluation_filter_config, context_config, reference_
                             evaluator_config, aggregator_config, representation_config=None,
                             discretization_config=None):
     """
-    Creates an anomaly detector from a set of config dicts.
-    See the individual modules for how to setup each of the config dicts.
+    Creates an anomaly detector from a set of configuration dicts.
+    See the individual modules for how to setup each of the configuration dicts.
     Representation and discretization configurations are optional.
-    However, a discretization config is required if a discrete distance function is used.
+    However, a discretization configuration is required if a discrete distance function is used.
     """
     evaluation_filter = filters.get_evaluation_filter(**evaluation_filter_config)
     context = contexts.get_context(**context_config)
@@ -43,13 +43,20 @@ def create_anomaly_detector(evaluation_filter_config, context_config, reference_
 
 
 def _get_filter_wrapper(evaluator_config, representation_config=None, discretization_config=None):
+    """
+    Retrieves a function that can be used to wrap filters, such that their output
+    is converted to the representation given by representation_config and
+    discretization_config.
+    Note that if the evaluator requires symbolic input, a discretization wrapper is
+    automatically applied.
+    """
     wrapper = lambda x: x
 
     if representation_config is not None:
         r = representations.get_representation_converter(**representation_config)
         wrapper = r
 
-    if evaluators.uses_discrete_distance(evaluator_config):
+    if evaluators.requires_symbolic_input(evaluator_config):
         r = representations.get_representation_converter(**discretization_config)
         new_wrapper = lambda x: r(wrapper(x))
         return new_wrapper
@@ -78,6 +85,7 @@ class AnomalyDetector(object):
     def evaluate(self, evaluation_sequence, progress_callback=None):
         logger.debug(_EVALUATE_MESSAGE % evaluation_sequence)
 
+        # since the aggregator keeps an internal buffer, it must be reset here
         self.aggregator.init(len(evaluation_sequence))
 
         for sequence, start, end in self.evaluation_filter(evaluation_sequence):

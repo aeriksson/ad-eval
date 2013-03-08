@@ -2,6 +2,10 @@ import numpy
 
 
 class MaxAggregator(object):
+    """
+    Constructs an anomaly vector with the maximum anomaly score
+    for each item.
+    """
     def __init__(self, series_length=0):
         self._values = numpy.zeros(series_length)
 

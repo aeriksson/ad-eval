@@ -4,14 +4,14 @@ _DIMENSION_ERROR = ('Target dimension ({target_dimension}) must be smaller '
                     'than original dimension ({original_dimension}).')
 
 
-def convert_to_paa(time_series, target_dimension=10):
+def convert_to_paa(sequence, target_dimension=10):
     """
     Generates a PAA (Piecewise Aggregate Approximation)
     representation of the given time series.
     """
-    original_dimension = len(time_series)
+    original_dimension = len(sequence)
     if target_dimension == original_dimension:
-        return time_series.copy()
+        return sequence.copy()
     
     assert target_dimension < original_dimension, _DIMENSION_ERROR.format(
         target_dimension=target_dimension,

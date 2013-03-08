@@ -14,8 +14,6 @@ def convert_to_sax(time_series, sample_count, alphabet_size):
     Returns the SAX representation (with with the specified sample count
     and alphabet size) of the given time series, with the alphabet given as
     the n first integers.
-
-    TODO: return a binary array instead of a string?
     """
     paa_representation = convert_to_paa(time_series, sample_count)
     normalized_series = convert_to_z_normalized(paa_representation)

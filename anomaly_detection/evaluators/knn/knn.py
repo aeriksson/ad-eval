@@ -24,5 +24,5 @@ class KNNEvaluator(object):
         d = heapq.nsmallest(self._k, distances)[self._k - 1]
         return d
 
-    def uses_discrete_distance(self):
+    def requires_symbolic_input(self):
         return self._distance.IS_DISCRETE

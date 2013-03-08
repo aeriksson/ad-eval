@@ -3,6 +3,10 @@ import numpy
 
 
 class MeanAggregator(object):
+    """
+    Constructs an anomaly vector with the mean anomaly score
+    for each item.
+    """
     def __init__(self, series_length=0):
         self._mean = numpy.zeros(series_length)
         self._counts = numpy.zeros(series_length)

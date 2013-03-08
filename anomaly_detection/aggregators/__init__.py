@@ -1,6 +1,6 @@
 '''
-This module contains methods for aggregating several overlapping
-time series.
+Module contains methods for aggregating interval anomaly scores
+to anomaly vectors.
 '''
 import max_aggregator
 import mean_aggregator
