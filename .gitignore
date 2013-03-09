@@ -1,4 +1,7 @@
+# python stuff
 *.py[cod]
-*.swp
-*.swo
 *.egg-info/
+
+# temp files
+*.sw[op]
+*~
