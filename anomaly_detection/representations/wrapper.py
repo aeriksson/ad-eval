@@ -1,6 +1,6 @@
 
 
-def wrap_evaluation_filter(evlauation_filter, converter):
+def wrap_evaluation_filter(evaluation_filter, converter):
     '''
     Wrapper for evaluation filters that converts their output series to a
     given representation (given by converter) before training/evaluating.

@@ -26,4 +26,4 @@ def requires_symbolic_input(config_dict):
     Indicates whether or not the evaluator specified by the given configuration
     requires a symbolic input format.
     """
-    return get_evaluator(**config_dict).uses_discrete_distance()
+    return get_evaluator(**config_dict).requires_symbolic_input()
