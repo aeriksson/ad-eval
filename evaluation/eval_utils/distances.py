@@ -74,11 +74,6 @@ def full_support(label_vector, anomaly_vector):
 
     threshold = _get_full_support_threshold(anomaly_vector, nonzero_indices)
 
-    target_support_size = len(nonzero_indices)
-    actual_support_size = sum(x >= threshold for x in anomaly_vector)
-
-    #distance = actual_support_size / target_support_size - 1
-
     vec1 = [i == 1 for i in label_vector]
     vec2 = [a >= threshold for a in anomaly_vector]
     distance = spatial.distance.hamming(vec1, vec2)
@@ -86,6 +81,27 @@ def full_support(label_vector, anomaly_vector):
     assert distance >= 0
 
     return distance
+
+
+def best_support(label_vector, anomaly_vector):
+    """
+    Finds the threshold that minimizes the error, and returns
+    the corresponding error.
+    """
+    unique_elements = reversed(sorted(set(anomaly_vector)))
+
+    min_distance = float('inf')
+
+    for threshold in unique_elements:
+        vec1 = [i == 1 for i in label_vector]
+        vec2 = [a >= threshold for a in anomaly_vector]
+        distance = spatial.distance.hamming(vec1, vec2)
+        if distance < min_distance:
+            min_distance = distance
+
+    assert min_distance >= 0
+
+    return min_distance
 
 
 def _get_full_support_threshold(anomaly_vector, nonzero_indices):

@@ -32,6 +32,9 @@ def plot_normalized_anomaly_vectors_3d(results, label_list):
     fig = pyplot.figure()
     plot = fig.gca(projection='3d')
     plot.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0)
+
+    fig.show()
+
     return fig, plot
 
 
@@ -187,6 +190,12 @@ def plot_mean_error_values(results, ad_labels, xvalues, plot=None, title=None, x
                                               lambda x: x['anomaly_detector'] == label)
         equal_support_errors.append(z)
 
+    best_support_errors = []
+    for label in ad_labels:
+        z = results.get_filtered_avg_over_key('best_support_distance',
+                                              lambda x: x['anomaly_detector'] == label)
+        best_support_errors.append(z)
+
     normalized_euclidean_errors = []
     for label in ad_labels:
         z = results.get_filtered_avg_over_key('normalized_euclidean_distance',
@@ -195,10 +204,12 @@ def plot_mean_error_values(results, ad_labels, xvalues, plot=None, title=None, x
 
     full_support_errors = _normalize_array(full_support_errors)
     equal_support_errors = _normalize_array(equal_support_errors)
+    best_support_errors = _normalize_array(best_support_errors)
     normalized_euclidean_errors = _normalize_array(normalized_euclidean_errors)
 
     plot.plot(xvalues, full_support_errors, 'k-', label='Full support error')
     plot.plot(xvalues, equal_support_errors, 'k:', label='Equal support error')
+    plot.plot(xvalues, best_support_errors, 'k.-', label='Best support error')
     plot.plot(xvalues, normalized_euclidean_errors, 'k--', label='Normalized Euclidean error')
 
     if title is not None:

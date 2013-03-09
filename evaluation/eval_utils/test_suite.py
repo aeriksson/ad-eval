@@ -100,6 +100,7 @@ def _evaluate_sequence(anomaly_detector, progress_callback, sequence, reference_
         'execution_time': execution_time,
         'equal_support_distance': distances.equal_support(reference_vector, anomaly_vector),
         'full_support_distance': distances.full_support(reference_vector, anomaly_vector),
+        'best_support_distance': distances.best_support(reference_vector, anomaly_vector),
         'normalized_euclidean_distance': distances.normalized_euclidean(reference_vector, anomaly_vector),
         'anomaly_vector': anomaly_vector
     }

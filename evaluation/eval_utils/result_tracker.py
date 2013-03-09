@@ -2,6 +2,7 @@ from __future__ import division
 
 import numpy
 
+
 class ResultTracker(object):
     """
     Class for keeping track of and displaying test results.
@@ -17,7 +18,8 @@ class ResultTracker(object):
 
     def add_record(self, anomaly_detector_label, test_label, execution_time=None,
                    equal_support_distance=None, full_support_distance=None,
-                   normalized_euclidean_distance=None, anomaly_vector=None):
+                   best_support_distance=None, normalized_euclidean_distance=None,
+                   anomaly_vector=None):
 
         self._anomaly_detector_labels.add(anomaly_detector_label)
         self._test_labels.add(test_label)
@@ -28,6 +30,7 @@ class ResultTracker(object):
             'execution_time': execution_time,
             'equal_support_distance': equal_support_distance,
             'full_support_distance': full_support_distance,
+            'best_support_distance': best_support_distance,
             'normalized_euclidean_distance': normalized_euclidean_distance,
             'anomaly_vector': anomaly_vector
         })
@@ -76,6 +79,7 @@ class ResultTracker(object):
         total_execution_time = self.get_filtered_sum_over_key('execution_time', relevance_filter)
         avg_equal_support = self.get_filtered_avg_over_key('equal_support_distance', relevance_filter)
         avg_full_support = self.get_filtered_avg_over_key('full_support_distance', relevance_filter)
+        avg_best_support = self.get_filtered_avg_over_key('best_support_distance', relevance_filter)
         avg_euclidean = self.get_filtered_avg_over_key('normalized_euclidean_distance', relevance_filter)
 
         if total_execution_time is not None:
@@ -84,6 +88,8 @@ class ResultTracker(object):
             print("\t\t\tAverage equal support distance:        %.3f" % avg_equal_support)
         if avg_full_support is not None:
             print("\t\t\tAverage full support distance:         %.3f" % avg_full_support)
+        if avg_best_support is not None:
+            print("\t\t\tAverage best support distance:         %.3f" % avg_best_support)
         if avg_euclidean is not None:
             print("\t\t\tAverage normalized Euclidean distance: %.3f" % avg_euclidean)
 
