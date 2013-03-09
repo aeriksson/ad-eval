@@ -17,6 +17,8 @@ full_support_dists = []
 equal_support_dists = []
 euclidean_dists = []
 
+anomaly_vectors = []
+
 for aggregator, heat_map_plot in zip(AGGREGATORS, heat_map_plots):
 
     # set up anomaly detectors
@@ -40,6 +42,8 @@ for aggregator, heat_map_plot in zip(AGGREGATORS, heat_map_plots):
     utils.plots.plot_normalized_anomaly_vector_heat_map(results, K_VALUES, plot=heat_map_plot)
     heat_map_plot.set_title(aggregator)
     heat_map_plot.set_ylabel('k')
+
+    anomaly_vectors.append(results.get_filtered_key_values('anomaly_vector', lambda x: x['anomaly_detector'] == K_VALUES[0]))
     
     full_support_dists.append(results.get_anomaly_detector_averages(K_VALUES, 'full_support_distance'))
     equal_support_dists.append(results.get_anomaly_detector_averages(K_VALUES, 'equal_support_distance'))
@@ -71,3 +75,13 @@ error_plots[2].set_title('Normalized Euclidean error')
 
 errors_fig.tight_layout()
 errors_fig.show()
+
+# plot heat maps
+vec_fig = pyplot.figure()
+vec_plot = vec_fig.gca()
+map(lambda (vector, style, legend): vec_plot.plot(vector[0], style, label=legend),
+    zip(anomaly_vectors, styles, AGGREGATORS))
+vec_plot.legend(loc=1)
+vec_plot.set_yticks([])
+vec_fig.tight_layout()
+vec_fig.show()
