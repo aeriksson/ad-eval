@@ -9,8 +9,6 @@ from matplotlib import pyplot
 
 import defaults
 
-import pickle
-
 rng = random.Random(4)
 
 K_VALUES = range(1, 50, 1)
@@ -38,18 +36,14 @@ test = [utils.load_sequence(TEST_FILE)]
 test_suite = utils.TestSuite(anomaly_detectors, ad_label_list, [test], 'test')
 
 #execute
-#test_suite.evaluate(display_progress=True)
+test_suite.evaluate(display_progress=True)
 
 results = test_suite.results
 
-f = open('results.tmp', 'r+')
-#pickle.dump(results, f)
-results = pickle.load(f)
-f.close()
-
 # plot the distances
-ERRORS = ['equal_support_distance', 'full_support_distance', 'normalized_euclidean_distance']
-ERROR_LABELS = ['Equal support', 'Full support', 'Normalized Euclidean']
+ERRORS = ['equal_support_distance', 'full_support_distance',
+          'best_support_distance', 'normalized_euclidean_distance']
+ERROR_LABELS = ['Equal support', 'Full support', 'Best support', 'Normalized Euclidean']
 
 for error in ERRORS:
     utils.plots.plot_average_value_heat_map(results, ad_label_matrix, K_VALUES,
