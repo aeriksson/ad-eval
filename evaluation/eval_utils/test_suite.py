@@ -7,7 +7,17 @@ from progress_counter import ProgressCounter
 
 
 class TestSuite(object):
-    def __init__(self, anomaly_detectors, anomaly_detector_labels, tests, test_labels, suite_label=None):
+    """
+    Encapsulates a set of evaluation tests.
+
+    These tests can be used to evaluate anomaly detectors
+    through the evaluate method.
+
+    Progress and result reports are generated automatically.
+    """
+
+    def __init__(self, anomaly_detectors, anomaly_detector_labels, tests,
+                 test_labels, suite_label=None):
         self._anomaly_detectors = anomaly_detectors
         self._anomaly_detector_labels = anomaly_detector_labels
         self._tests = tests
@@ -31,7 +41,8 @@ class TestSuite(object):
             anomaly_detector = self._anomaly_detectors[i]
             label = self._anomaly_detector_labels[i]
 
-            self._evaluate_anomaly_detector(anomaly_detector, label, progress_counter)
+            self._evaluate_anomaly_detector(anomaly_detector, label,
+                                            progress_counter)
 
             if display_progress:
                 progress_counter.completed_detectors = i + 1

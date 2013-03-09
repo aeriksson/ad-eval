@@ -3,16 +3,12 @@ from sys import stdout
 
 
 class ProgressCounter():
-    def __init__(
-                    self,
-                    total_detectors=1,
-                    completed_detectors=0,
-                    total_tests=1,
-                    completed_tests=0,
-                    total_sequences=1,
-                    completed_sequences=0,
-                    sequence_progress=0
-                ):
+    """
+    Keeps track of anomaly detector/test/sequence progress.
+    """
+    def __init__(self, total_detectors=1, completed_detectors=0, total_tests=1,
+                 completed_tests=0, total_sequences=1, completed_sequences=0,
+                 sequence_progress=0):
         self.total_detectors = total_detectors
         self.completed_detectors = completed_detectors
         self.total_tests = total_tests
@@ -45,5 +41,4 @@ class ProgressCounter():
         stdout.flush()
 
     def _generate_counter_string(self, name, total, completed):
-        #return "%s %.1f%% (%i/%i), " % (name, 100.0 * completed / total, completed, total)
         return "{} {: >.1%} ({}/{}), ".format(name, completed / total, completed, total)

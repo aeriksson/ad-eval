@@ -100,6 +100,9 @@ def _get_anomaly_function_from_type(anomaly_type, **kwargs):
 
 
 class RandomAnomalyGenerator(object):
+    """
+    Adds random artificial anomalies to sequences.
+    """
 
     def __init__(self, amplitude_interval, width_interval, anomaly_function, random_number_generator=None):
         self._amplitude_interval = amplitude_interval

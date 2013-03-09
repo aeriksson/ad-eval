@@ -37,7 +37,8 @@ def _get_equal_support_threshold(anomaly_vector, support_size):
     Finds the smallest number t such that the number of elements
     in anomaly_vector that are larger than t is at least support_size.
     
-    NOTE: complexity can be reduced by searching.
+    Note that the complexity can be reduced by performing a search
+    instead of trying every single element.
     '''
 
     unique_elements_sorted = reversed(sorted(set(anomaly_vector)))
@@ -49,12 +50,19 @@ def _get_equal_support_threshold(anomaly_vector, support_size):
 
 def normalized_euclidean(label_vector, anomaly_vector):
     '''
+    Computes the normalized Euclidean distance between the binary label vector
+    and the real-valued anomaly vector.
+
+    Specifically, the anomaly vector is normalized to lie in [0, 1] and the
+    regular Euclidean distance is taken between the label vector and the
+    anomaly vector.
     '''
     min_val = min(anomaly_vector)
     width = max(anomaly_vector) - min_val
     normalized_anomaly_vector = [(x - min_val) / width for x in anomaly_vector]
 
-    distance = spatial.distance.euclidean(normalized_anomaly_vector, label_vector)
+    distance = spatial.distance.euclidean(normalized_anomaly_vector,
+                                          label_vector)
 
     return distance
     
@@ -109,7 +117,7 @@ def _get_full_support_threshold(anomaly_vector, nonzero_indices):
     Finds the smallest number t such that the number of elements
     in anomaly_vector that are larger than t is at least support_size.
     
-    NOTE: speed can be improved by using a better algorithm.
+    Note that the speed can be improved by using a better algorithm.
     '''
 
     unique_elements_sorted = reversed(sorted(set(anomaly_vector)))
